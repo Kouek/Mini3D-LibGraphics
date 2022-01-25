@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="源文件\libgraphics">
+      <UniqueIdentifier>{ec60ac2d-7d37-4c79-8ff2-21f12b67ebda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\libg3D">
+      <UniqueIdentifier>{db7ad9b5-3d48-42e4-ad9f-4394f9a30774}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="libgraphics\exceptio.c">
+      <Filter>源文件\libgraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="libgraphics\genlib.c">
+      <Filter>源文件\libgraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="libgraphics\graphics.c">
+      <Filter>源文件\libgraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="libgraphics\random.c">
+      <Filter>源文件\libgraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="libgraphics\simpio.c">
+      <Filter>源文件\libgraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="libgraphics\strlib.c">
+      <Filter>源文件\libgraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="libg3D\graphics3D.c">
+      <Filter>源文件\libg3D</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
