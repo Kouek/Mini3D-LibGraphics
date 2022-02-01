@@ -1,10 +1,22 @@
 # Mini3D with LibGraphics
 
-本企划旨在让笔者本人摸清楚基本的三维图形渲染流程，同时~~帮你卷赢C大程~~。
+本企划旨在让笔者本人摸清楚**基本的**三维图形渲染流程，同时~~帮你卷赢C大程~~。
 
-由于众所周知的原因，C大程很多任课老师来自**CAD&CG国家重点实验室**，做一个具有三维渲染功能的大程是比较讨喜的选择。笔者搜了一圈GitHub，没有找到适配**LibGraphics**的软渲染库，因此决定自己实现一个，权当练习与科普。
+由于众所周知的原因，C大程很多任课老师来自**CAD&CG国家重点实验室**，做一个具有三维渲染功能的大程是比较讨喜的选择。笔者搜了一圈GitHub，没有找到适配**LibGraphics**的**软光栅化渲染库**，因此决定自己实现一个，权当练习与科普。
 
-文档建议使用**Typora**阅读（主要是因为文档有很多LaTex格式的数学公式）。由于最新的**Typora**已经转型收费软件，可以下载[Typora for windows — beta version release](https://typora.io/windows/dev_release.html)的0.11.18版本（免费）。
+库的接口封装风格将参考OpenGL。文档建议使用**Typora**阅读（主要是因为文档有很多LaTex格式的数学公式）。由于最新的**Typora**已经转型收费软件，可以下载[Typora for windows — beta version release](https://typora.io/windows/dev_release.html)的0.11.18版本（免费）。
+
+## 已完成
+
+- 线元绘制
+- 面元绘制（绘制颜色或纹理）
+- 关于LibGraphics的文档
+
+## 待完成
+
+- 点元绘制
+- 文档
+- ......
 
 ## 章节
 

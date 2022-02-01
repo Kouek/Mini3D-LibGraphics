@@ -160,7 +160,7 @@ void libg3DClearDepthBuffer()
 }
 
 static float* MVPMat = NULL;
-void libg3DApplyMVPMat(const float* const* mat4x4Ptr)
+void libg3DApplyMVPMat(const float* const mat4x4Ptr[16])
 {
 	MVPMat = *mat4x4Ptr;
 }
@@ -523,6 +523,7 @@ static void runBresenhamAlgorithm()
 // 三角形光栅化算法，计算结果储存在 fragmentShaderInputs 中
 static void runTriangleRasterization(unsigned int vertCnt)
 {
+	// 遍历所有裁剪出来的点组成的三角形
 	unsigned char prev = 1, curr = 2;
 	for (; curr != vertCnt; prev = curr, ++curr)
 	{
@@ -658,6 +659,12 @@ static inline void runFragmentShader(unsigned int inputIdx)
 	frameBuffer.depthAttachment[inputIdx] = fragmentShaderInputs[inputIdx].depth;
 }
 
+static enum LIBG3D_CULL_FACE_MODE cullFaceMode = LIBG3D_CULL_BACK;
+void libg3DSetCullFaceMode(enum LIBG3D_CULL_FACE_MODE cullMode)
+{
+	cullFaceMode = cullMode;
+}
+
 static unsigned int* naturalIndices = NULL;
 static unsigned int naturalIndicesNum = 0;
 
@@ -727,9 +734,8 @@ void libg3DDrawVertsByIndices(
 			runVertexShader(verts + attrLen * indices[idxOffs], inGrpIdx);
 			++idxOffs;
 		}
-		// 背面剔除
 		// 近切平面裁剪
-		//   太难了，不做了
+		//   TODO (太难了，不做了
 		unsigned int validGrpVertCnt = grpVertNum;
 		// 透视除法
 		for (unsigned int inGrpIdx = 0; inGrpIdx < grpVertNum; ++inGrpIdx)
@@ -759,7 +765,24 @@ void libg3DDrawVertsByIndices(
 			}
 		}
 		if (validGrpVertCnt == 0)continue;
-
+		// 面剔除
+		if (primitive == LIBG3D_TRIANGLES && cullFaceMode != LIBG3D_CULL_NO_FACE)
+		{
+			float v0v1[3] = {
+				vertexShaderOutputs[1].pos[0] - vertexShaderOutputs[0].pos[0],
+				vertexShaderOutputs[1].pos[1] - vertexShaderOutputs[0].pos[1],
+				vertexShaderOutputs[1].pos[2] - vertexShaderOutputs[0].pos[2]
+			};
+			float v0v2[3] = {
+				vertexShaderOutputs[2].pos[0] - vertexShaderOutputs[0].pos[0],
+				vertexShaderOutputs[2].pos[1] - vertexShaderOutputs[0].pos[1],
+				vertexShaderOutputs[2].pos[2] - vertexShaderOutputs[0].pos[2]
+			};
+			// 计算法线
+			libg3DVec3CrossVec3(v0v2, v0v1, v0v2);
+			if (cullFaceMode == LIBG3D_CULL_BACK && v0v2[2] < 0)continue;
+			else if (cullFaceMode == LIBG3D_CULL_FRONT && v0v2[2] >= 0)continue;
+		}
 		// ---> 目前为标准设备空间（裁剪空间） <---
 		// 透视裁剪
 		//   裁剪范围为[(-1,-1,-1), (1,1,1)]

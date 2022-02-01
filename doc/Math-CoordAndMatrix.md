@@ -4,7 +4,7 @@
 
 需要用到**LibGraphics**写C大程项目，相信你一定已经学完~~并忘掉~~**线性代数**了。
 
-不过没关系，本项目用到的数学知识特别简单，将全部在下文讲完。三维图形算法中一般只用到 $4\cross3$ 或 $4\cross4$ 的矩阵，以及 $4\cross1$ 或 $3\cross1$ 的向量，所以下文的论述和算法都不会超过这个范围。
+不过没关系，本项目用到的数学知识特别简单，将全部在下文讲完。三维图形算法中一般只用到 $4\cross3$ 或 $4\cross4$ 的矩阵，以及 $4\cross1$ 或 $3\cross1$ 的向量。
 
 ## 左右手系 与 矩阵、向量的计算机表示
 
@@ -12,13 +12,12 @@
 
 - 下图中，左边为**右手系**，右边为**左手系**。
   - 弯曲箭头表示使用**右手**或**左手**为 $[1,0,0]\cross[0,1,0]$ 的结果确定方向。
-    - 试一试手握拳，让拇指以外的手指与**红、绿箭头**重合，看看拇指是否指向**蓝色箭头**的方向。
-    - 这就是如此命名的原因。
+    - 试一试手握拳，让拇指以外的手指与**红、绿箭头**重合，看看拇指是否指向**蓝色箭头**的方向。这就是如此命名的原因！
 
 ![](./rsc/CoordAndMatrix-RLCoord.png)
 
 - **行主序**与**列主序**则表示矩阵在计算机内存中的布局。
-  - 序号表示内存偏移量。如行主序矩阵中， $A[6]$ 表示 $a_{12}$（行列均从0开始计数）。
+  - 序号表示内存偏移量。如行主序矩阵中， $mat4\cross4[6]$ 表示 $a_{12}$（行列均从0开始计数）。
 
 ```c
 // 行主序
@@ -48,7 +47,7 @@
 
 ## 矩阵点乘
 
-我们只需要实现 $4\cross4$ 的矩阵和 $4\cross1$ 的向量之间的点乘即可。
+我们只需要实现 $4\cross4$ 的矩阵和 $4\cross1$ 的向量之间的点乘即可（至于为什么，见后文）。
 
 - $4\cross4$ 矩阵点乘规则（矩阵点乘向量同理）
 
@@ -89,6 +88,7 @@ a_{10}b_{00}+a_{11}b_{10}+a_{12}b_{20}+a_{13}b_{30} & a_{10}b_{01}+a_{11}b_{11}+
 $$
 
 - 在看实现之前，我们先看一下磁盘的文件结构：
+  - 相比上一章节，添加了**math3D.h**文件。
 
 ```
 + <项目名>
@@ -112,6 +112,7 @@ $$
 ```c
 // math3D.h
 // 由于笔者想偷懒，所以函数实现都写在.h文件中，函数需要加static防止符号重定义问题
+// 同时，添加inline建议编译器“尽量”把函数嵌到调用者的代码中，减少函数调用
 
 // 使用宏减少重复编码
 #define MUL_THEN_ADD(lft, rht, row, col, stride) \
@@ -120,7 +121,7 @@ $$
 	+ lft[row * 4 + 2] * rht[col + stride * 2] \
 	+ lft[row * 4 + 3] * rht[col + stride * 3]
 
-static void libg3DMat4x4MulVec4(float* outVec4, const float* lftMat4x4, const float* rhtVec4)
+static inline void libg3DMat4x4MulVec4(float* outVec4, const float* lftMat4x4, const float* rhtVec4)
 {
 	// 使用临时变量v4，避免 outVec4==rhtVec4 时的原地运算问题
 	float v4[4];
@@ -131,7 +132,7 @@ static void libg3DMat4x4MulVec4(float* outVec4, const float* lftMat4x4, const fl
 	memcpy(outVec4, v4, sizeof(float) * 4);
 }
 
-static void libg3DMat4x4MulMat4x4(float* outMat4x4, const float* lftMat4x4, const float* rhtMat4x4)
+static inline void libg3DMat4x4MulMat4x4(float* outMat4x4, const float* lftMat4x4, const float* rhtMat4x4)
 {
 	// 使用临时变量m4，避免 outMat4x4==lft/rhtMar4x4 时的原地运算问题
 	float m4[16];
@@ -167,10 +168,10 @@ $$
 I=
 \left[
 \begin{matrix}
-1 & 0 & 0 & 0\\
-0 & 1 & 0 & 0\\
-0 & 0 & 1 & 0\\
-0 & 0 & 0 & 1\\
+1 & 0 & \cdots & 0\\
+0 & 1 & \cdots & 0\\
+\vdots & \vdots & \ddots & \vdots\\
+0 & 0 & \cdots & 1\\
 \end{matrix}
 \right]
 $$
@@ -220,10 +221,10 @@ $$
 A_{m\cross m}*I_{m\cross m}=\ ...\ =A
 $$
 
-- 对于任意代表**空间中三维坐标**的向量 $P=(x,y,z)$ 也同理
+- 对于任意代表**空间中三维坐标**的向量 $p=[x,y,z]^T$ 也同理
 
 $$
-I_{3\cross3}*P_{3\cross1}=
+I_{3\cross3}*p_{3\cross1}=
 \left[
 \begin{matrix}
 1 & 0 & 0\\
@@ -247,9 +248,9 @@ y\\
 z\\
 \end{matrix}
 \right]
-=P
+=p
 \\\\
-P_{3\cross1}*I_{3\cross3}=\ ...\ =P
+p_{3\cross1}*I_{3\cross3}=\ ...\ =p
 $$
 
 显然，**单位阵**左乘右乘矩阵、向量，都不会对其做出改变。虽然看起来没什么用，但正是这种**不变性**让我们安心。
@@ -265,7 +266,7 @@ $$
 	memset(##mat, 0, sizeof(float) * 16);\
 	##mat[0] = ##mat[5] = ##mat[10] = ##mat[15] = 1.f;
 
-static float* libg3DGenIdentity4x4()
+static inline float* libg3DGenIdentity4x4()
 {
 	float* mat = NULL;
 	mat = malloc(sizeof(float) * 16);
@@ -273,7 +274,7 @@ static float* libg3DGenIdentity4x4()
 	return mat;
 }
 
-static void libg3DSetIdentity4x4(float* mat4x4)
+static inline void libg3DSetIdentity4x4(float* mat4x4)
 {
 	SET_IDENTITY4X4(mat4x4);
 }
@@ -283,30 +284,106 @@ static void libg3DSetIdentity4x4(float* mat4x4)
 
 ## 缩放矩阵
 
+**缩放矩阵**是最简单的变换矩阵。当我们要将向量 $p=[x,y,z]^T$ 以原点为中心（很多软件管这个叫**锚点**，比如Adobe系列）缩放到$p'=[s_xx,s_yy,s_zz]^T$ 时，显然可以用下面的矩阵：
+$$
+\begin{aligned}
+
+&\because
+\left[
+\begin{matrix}
+s_x & 0 & 0\\
+0 & s_y & 0\\
+0 & 0 & s_z\\
+\end{matrix}
+\right]
+*
+p
+=
+\left[
+\begin{matrix}
+s_x & 0 & 0\\
+0 & s_y & 0\\
+0 & 0 & s_z\\
+\end{matrix}
+\right]
+*
+\left[
+\begin{matrix}
+x\\
+y\\
+z\\
+\end{matrix}
+\right]
+=
+\left[
+\begin{matrix}
+s_xx\\
+s_yy\\
+s_zz\\
+\end{matrix}
+\right]=p'\\
+
+&\therefore
+Scale_{xyz}
+=
+\left[
+\begin{matrix}
+s_x & 0 & 0\\
+0 & s_y & 0\\
+0 & 0 & s_z\\
+\end{matrix}
+\right]
+
+\end{aligned}
+$$
+
+- 实现
+
+```c
+// math3D.h
+
+static inline void libg3DMat4x4Scale(float* inOutMat4x4, float sX, float sY, float sZ)
+{
+	// 等价于左乘 [[sX,0,0,0], [0,sY,0,0], [0,0,sZ,0], [0,0,0,1]]。
+	inOutMat4x4[0] *= sX;
+	inOutMat4x4[1] *= sX;
+	inOutMat4x4[2] *= sX;
+	inOutMat4x4[3] *= sX;
+	inOutMat4x4[4] *= sY;
+	inOutMat4x4[5] *= sY;
+	inOutMat4x4[6] *= sY;
+	inOutMat4x4[7] *= sY;
+	inOutMat4x4[8] *= sZ;
+	inOutMat4x4[9] *= sZ;
+	inOutMat4x4[10] *= sZ;
+	inOutMat4x4[11] *= sZ;
+}
+```
+
 ## 旋转矩阵
 
 **旋转矩阵**是推导比较麻烦的一个矩阵。一般都从**绕 $z$ 轴旋转**入手，再推广到绕 $y$ 轴和绕 $x$ 轴旋转。
 
-如果我们现在要将向量 $P$ 绕 $z$ 轴逆时针旋转 $d\alpha$ 角到 $P'$，有
-
-![](./rsc/CoordAndMatrix-RotateXOY.png)
+如果我们现在要将向量 $p$ 绕 $z$ 轴逆时针旋转 $d\alpha$ 角到 $p'$，有
 $$
 d\alpha=a_{P'}-a_P
 $$
-由于旋转保长度，假设 $\Vert P\Vert_2=L$，且其 $z$ 轴分量为 $z$，有
+![](./rsc/CoordAndMatrix-RotateXOY.png)
+
+由于旋转保长度，假设 $\Vert p\Vert_2=L$，且其 $z$ 轴分量为 $z$，有
 $$
 \begin{aligned}
 
 \because\\
-P&=[L\cos{\alpha_P},\ L\sin{\alpha_P},\ z]^T\\
+p&=[L\cos{\alpha_p},\ L\sin{\alpha_p},\ z]^T\\
 \and\\
-P'&=[L\cos{\alpha_{P'}},\ L\sin{\alpha_{P'}},\ z]^T\\
-&=[L\cos{(\alpha_P+d\alpha)},\ L\sin{(\alpha_P+d\alpha)},\ z]^T\\
-&=[L\cos{(\alpha_P+d\alpha)},\ L\sin{(\alpha_P+d\alpha)},\ z]^T\\
-&=[L(\cos{\alpha_P}\cos{d\alpha}-\sin{\alpha_P}\sin{d\alpha}),\ L(\sin{\alpha_P}\cos{d\alpha}+\cos{\alpha_P}\sin{d\alpha}),\ z]^T\\
+p'&=[L\cos{\alpha_{p'}},\ L\sin{\alpha_{p'}},\ z]^T\\
+&=[L\cos{(\alpha_p+d\alpha)},\ L\sin{(\alpha_p+d\alpha)},\ z]^T\\
+&=[L\cos{(\alpha_p+d\alpha)},\ L\sin{(\alpha_p+d\alpha)},\ z]^T\\
+&=[L(\cos{\alpha_p}\cos{d\alpha}-\sin{\alpha_p}\sin{d\alpha}),\ L(\sin{\alpha_p}\cos{d\alpha}+\cos{\alpha_p}\sin{d\alpha}),\ z]^T\\
 
 \therefore\\
-P'&=
+p'&=
 \left[
 \begin{matrix}
 \cos{d\alpha} & -\sin{d\alpha} & 0 & 0\\
@@ -315,7 +392,7 @@ P'&=
 0 & 0 & 0 & 1
 \end{matrix}
 \right]
-*[L\cos{\alpha_P},\ L\sin{\alpha_P},\ z]^T\\&=Rotate_z(d\alpha)*P
+*[L\cos{\alpha_p},\ L\sin{\alpha_p},\ z]^T\\&=Rotate_z(d\alpha)*p
 
 \end{aligned}
 $$
@@ -416,93 +493,158 @@ $$
 ```c
 // math3D.h
 
-#define PI 3.1415926
-#define DEG_TO_RAD PI/180.f
+#define pI 3.1415926f
+#define DEG_TO_RAD pI/180.f
 
-static void libg3DMat4x4Rotate(float* inOutMat4x4, float degX, float degY, float degZ)
+static inline void libg3DMat4x4Rotate(float* inOutMat4x4, float degX, float degY, float degZ)
 {
+	float alphas[] = {
+		degX * DEG_TO_RAD,
+		degY * DEG_TO_RAD,
+		degZ * DEG_TO_RAD
+	};
 	float coss[] = {
-		cosf(degX * DEG_TO_RAD),
-		cosf(degY * DEG_TO_RAD),
-		cosf(degZ * DEG_TO_RAD) };
+		cosf(alphas[0]),
+		cosf(alphas[1]),
+		cosf(alphas[2])
+	};
 	float sins[] = {
-		sinf(degX * DEG_TO_RAD),
-		sinf(degY * DEG_TO_RAD),
-		sinf(degZ * DEG_TO_RAD) };
-	float right[16] = { 0 };
-	float out[16] = { 0 };
-	right[0] = coss[1] * coss[2];
-	right[1] = -coss[0] * sins[2];
-	right[2] = sins[1];
-	right[4] = sins[0] * sins[1] * coss[2] + coss[0] * sins[2];
-	right[5] = coss[0] * coss[2] - sins[0] * sins[1] * sins[2];
-	right[6] = -sins[0] * sins[1];
-	right[8] = sins[0] * sins[2] - coss[0] * sins[1] * coss[2];
-	right[9] = coss[0] * sins[1] * sins[2] + sins[0] * coss[2];
-	right[10] = coss[0] * coss[1];
-	right[15] = 1;
-	libg3DMat4x4MulMat4x4(out, inOutMat4x4, right);
-	memcpy(inOutMat4x4, out, sizeof(float) * 16);
+		sinf(alphas[0]),
+		sinf(alphas[1]),
+		sinf(alphas[2])
+	};
+	float left[16] = { 0 };
+	left[0] = coss[1] * coss[2];
+	left[1] = -coss[0] * sins[2];
+	left[2] = sins[1];
+	left[4] = sins[0] * sins[1] * coss[2] + coss[0] * sins[2];
+	left[5] = coss[0] * coss[2] - sins[0] * sins[1] * sins[2];
+	left[6] = -sins[0] * coss[1];
+	left[8] = sins[0] * sins[2] - coss[0] * sins[1] * coss[2];
+	left[9] = coss[0] * sins[1] * sins[2] + sins[0] * coss[2];
+	left[10] = coss[0] * coss[1];
+	left[15] = 1;
+	libg3DMat4x4MulMat4x4(inOutMat4x4, left, inOutMat4x4);
 }
 ```
 
-
-
 ## 平移矩阵
 
-## 位姿矩阵（Pose）
+把**平移矩阵**放到最后，不是因为它复杂，而是因为它需要引入**齐次坐标**这个概念（虽然我们已经在代码中用了）。
 
+众所周知（bushi），$3\cross3$ 的矩阵表示三维欧氏空间的线性变换。
+
+一个变换 $f(x),x\in R^n$ 是 $n$ 维欧氏空间 $R^n$ 的线性变换，当且仅当
+$$
+\begin{aligned}
+
+f(x+y)&=f(x)+f(y)\\
+&\and\\
+f(kx)&=kf(x)\\
+&&where\ x,y\in R^n,\ k\in R\and k\neq0
+
+\end{aligned}
+$$
+假设存在一个线性变换 $t(p),p\in R^3$ 使得**点** $p=[x,y,z]^T$ 平移到 $p'=[x+t_x,y+t_y,z+t_z]^T$（注意，这里只能对点进行平移，因为向量有平移不变性） ，则有
+$$
+\begin{aligned}
+
+\because \ t(p)&=p'=p+[t_x,t_y,t_z]^T\\
+
+\therefore \ t(p+p)&=p+p+[t_x,t_y,t_z]^T\\
+&\neq p+[t_x,t_y,t_z]^T+p+[t_x,t_y,t_z]^T\\
+&=t(p)+t(p)
+
+\end{aligned}
+$$
+所以不存在该线性变换，即**不存在矩阵 $T_{3\cross3}$ 使得 $Tp=p'$**。
+
+而如果我们给点 $p$ 升一维，使用以下对应关系进行转化：
+$$
+\begin{aligned}
+
+p_3\to p_4&=[x,y,z]^T\to[x,y,z,1]^T\\
+p_4\to p_3&=[x,y,z,w]^T\to[\frac{x}{w},\frac{y}{w},\frac{z}{w}]^T
+
+\end{aligned}
+$$
+则可以有以下论证：
+
+要将 $R^3$ 下的 $p=[x,y,z]^T$ 平移到 $p'=[x+t_x,y+t_y,z+t_z]^T$，即将 $R^4$ 下的 $p=[x,y,z,1]^T$ 变换到 $p'=[t_w(x+t_x),t_w(y+t_y),t_w(z+t_z),t_w]^T,t_w\neq 0$。要实现这个变换，显然可以用下面的矩阵：
+$$
+\begin{aligned}
+
+&\because
+\left[
+\begin{matrix}
+1 & 0 & 0 & t_x\\
+0 & 1 & 0 & t_x\\
+0 & 0 & 1 & t_x\\
+0 & 0 & 0 & 1\\
+\end{matrix}
+\right]
+*
+\left[
+\begin{matrix}
+x\\y\\z\\1
+\end{matrix}
+\right]
+=
+\left[
+\begin{matrix}
+x+t_x\\y+t_y\\z+t_z\\1
+\end{matrix}
+\right]\\
+
+&\therefore
+Translate=
+\left[
+\begin{matrix}
+1 & 0 & 0 & t_x\\
+0 & 1 & 0 & t_x\\
+0 & 0 & 1 & t_x\\
+0 & 0 & 0 & 1\\
+\end{matrix}
+\right]
+
+\end{aligned}
+$$
+此时 $t_w=1$。
+
+- 实现
+
+```c
+static inline void libg3DMat4x4Translate(float* inOutMat4x4, float tX, float tY, float tZ)
+{
+	// 等价于左乘 [[1,0,0,tX], [0,1,0,tY], [0,0,1,tZ], [0,0,0,1]]。
+	//   由于未经透视投影前，不管如何变换，第3行均为[0,0,0,1]，
+	//   可不用左乘，直接简化如下
+	inOutMat4x4[3] += tX;
+	inOutMat4x4[7] += tY;
+	inOutMat4x4[11] += tZ;
+}
+```
+
+## 综合一下——位姿矩阵（Pose）
+
+已经实现了缩放、旋转、平移变换，那要怎么把他们结合起来呢？这其实要看你的需求。
+
+一个常见的需求是描述一个**相机**。首先，相机无所谓大小缩放，它在渲染器中一般用来实现视角变换，只需要有**位置**和**方向**两个属性就足够了。视角的放大缩小可以通过更改后文的**投影参数**实现。
+
+其次，一般情况下，相机的位置和方向需要相对**同一个相对固定参照系**来描述。在拍摄现场，导演一般会说：“把相机弄到桌子后x米，朝向桌子”，而很少说：“把相机弄到桌子后x米，到了之后再朝左边转x度，朝下边转x度”。
+
+
+
+## 投影矩阵
+
+
+
+## 综合起来——模型、观察、投影矩阵（MVP）
 
 $$
 \begin{aligned}
 
-Pose&=Rotate*Translate\\
-&=
-\left[
-\begin{matrix}
-r00 & r01 & r02 & 0\\
-r10 & r11 & r12 & 0\\
-r20 & r21 & r22 & 0\\
-0 & 0 & 0 & 1
-\end{matrix}
-\right]
-*
-\left[
-\begin{matrix}
-1 & 0 & 0 & t_x\\
-0 & 1 & 0 & t_y\\
-0 & 0 & 1 & t_z\\
-0 & 0 & 0 & 1
-\end{matrix}
-\right]\\
-&=
-\left[
-\begin{matrix}
-r00 & r01 & r02 & t_x\\
-r10 & r11 & r12 & t_y\\
-r20 & r21 & r22 & t_z\\
-0 & 0 & 0 & 1
-\end{matrix}
-\right]\\
-&=
-\left[
-\begin{matrix}
-1 & 0 & 0 & t_x\\
-0 & 1 & 0 & t_y\\
-0 & 0 & 1 & t_z\\
-0 & 0 & 0 & 1
-\end{matrix}
-\right]
-*
-\left[
-\begin{matrix}
-r00 & r01 & r02 & 0\\
-r10 & r11 & r12 & 0\\
-r20 & r21 & r22 & 0\\
-0 & 0 & 0 & 1
-\end{matrix}
-\right]\\
-&=Translate*Rotate
+MVP&=Projection*View*Model\\
 
 \end{aligned}
 $$

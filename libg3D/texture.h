@@ -103,8 +103,8 @@ static inline void libg3DSampleTexture(
 	switch (texWarpMode)
 	{
 	case LIBG3D_TEXWARP_CLAMP_TO_EDGE:
-		u = u < 0 ? 0 : u > 1.f ? 1.f : u;
-		v = v < 0 ? 0 : v > 1.f ? 1.f : v;
+		u = u < 0 ? 0 : u >= 1.f ? .9999999f : u;
+		v = v < 0 ? 0 : v >= 1.f ? .9999999f : v;
 		break;
 	default:
 		printf("[ERROR]Invalid texWarpMode. In file: %s, at line: %d\n", __FILE__, __LINE__);

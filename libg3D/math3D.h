@@ -1,7 +1,7 @@
 #ifndef _MATH3D_H
 #define _MATH3D_H
 
-#define PI 3.1415926
+#define PI 3.1415926f
 #define DEG_TO_RAD PI/180.f
 
 #include <stdio.h>
@@ -21,7 +21,7 @@
 // |12|13|14|15| | |3|
 // +--+--+--+--+ | +-+
 
-static void libg3DPrintMat4x4(const float* mat4x4, const char* name)
+static inline void libg3DPrintMat4x4(const float* mat4x4, const char* name)
 {
 	if (name != NULL)
 		printf("%s", name);
@@ -33,7 +33,7 @@ static void libg3DPrintMat4x4(const float* mat4x4, const char* name)
 	printf(">>>\n");
 }
 
-static void libg3DPrintVec4(const float* vec4, const char* name)
+static inline void libg3DPrintVec4(const float* vec4, const char* name)
 {
 	if (name != NULL)
 		printf("%s", name);
@@ -46,7 +46,7 @@ static void libg3DPrintVec4(const float* vec4, const char* name)
 	memset(##mat, 0, sizeof(float) * 16);\
 	##mat[0] = ##mat[5] = ##mat[10] = ##mat[15] = 1.f;
 
-static float* libg3DGenIdentity4x4()
+static inline float* libg3DGenIdentity4x4()
 {
 	float* mat = NULL;
 	mat = malloc(sizeof(float) * 16);
@@ -54,7 +54,7 @@ static float* libg3DGenIdentity4x4()
 	return mat;
 }
 
-static void libg3DSetIdentity4x4(float* mat4x4)
+static inline void libg3DSetIdentity4x4(float* mat4x4)
 {
 	SET_IDENTITY4X4(mat4x4);
 }
@@ -75,7 +75,7 @@ static void libg3DSetIdentity4x4(float* mat4x4)
 	##mat[11] = 2.f * near * far / (near - far);\
 	##mat[14] = -1.f;
 
-static float* libg3DGenPerspective4x4FromRaw(
+static inline float* libg3DGenPerspective4x4FromRaw(
 	float left, float right,
 	float bottom, float top,
 	float near, float far)
@@ -86,7 +86,7 @@ static float* libg3DGenPerspective4x4FromRaw(
 	return mat;
 }
 
-static void libg3DSetPerspective4x4FromRaw(
+static inline void libg3DSetPerspective4x4FromRaw(
 	float* mat4x4,
 	float left, float right,
 	float bottom, float top,
@@ -104,7 +104,7 @@ static float* libg3DGenPerspective4x4(float near, float far, float degFOV, float
 	return libg3DGenPerspective4x4FromRaw(-right, right, -top, top, near, far);
 }
 
-static void libg3DSetPerspective4x4(
+static inline void libg3DSetPerspective4x4(
 	float* mat4x4,
 	float near,
 	float far, float degFOV, float ratioHW)
@@ -121,7 +121,7 @@ static void libg3DSetPerspective4x4(
 	+ lft[row * 4 + 2] * rht[col + stride * 2] \
 	+ lft[row * 4 + 3] * rht[col + stride * 3]
 
-static void libg3DMat4x4MulVec4(float* outVec4, const float* lftMat4x4, const float* rhtVec4)
+static inline void libg3DMat4x4MulVec4(float* outVec4, const float* lftMat4x4, const float* rhtVec4)
 {
 	// 使用临时变量v4，避免 outVec4==rhtVec4 时的原地运算问题
 	float v4[4];
@@ -132,7 +132,7 @@ static void libg3DMat4x4MulVec4(float* outVec4, const float* lftMat4x4, const fl
 	memcpy(outVec4, v4, sizeof(float) * 4);
 }
 
-static void libg3DMat4x4MulMat4x4(float* outMat4x4, const float* lftMat4x4, const float* rhtMat4x4)
+static inline void libg3DMat4x4MulMat4x4(float* outMat4x4, const float* lftMat4x4, const float* rhtMat4x4)
 {
 	// 使用临时变量m4，避免 outMat4x4==lft/rhtMar4x4 时的原地运算问题
 	float m4[16];
@@ -157,58 +157,65 @@ static void libg3DMat4x4MulMat4x4(float* outMat4x4, const float* lftMat4x4, cons
 
 #undef MUL_THEN_ADD
 
-static void libg3DMat4x4Scale(float* inOutMat4x4, float sX, float sY, float sZ)
+static inline void libg3DMat4x4Scale(float* inOutMat4x4, float sX, float sY, float sZ)
 {
 	// 等价于左乘 [[sX,0,0,0], [0,sY,0,0], [0,0,sZ,0], [0,0,0,1]]。
-	for (unsigned char col = 0; col < 4; ++col)
-	{
-		unsigned char idx;
-		idx = 0 * 4 + col;
-		inOutMat4x4[idx] *= sX;
-		idx = 1 * 4 + col;
-		inOutMat4x4[idx] *= sY;
-		idx = 2 * 4 + col;
-		inOutMat4x4[idx] *= sZ;
-	}
+	inOutMat4x4[0] *= sX;
+	inOutMat4x4[1] *= sX;
+	inOutMat4x4[2] *= sX;
+	inOutMat4x4[3] *= sX;
+	inOutMat4x4[4] *= sY;
+	inOutMat4x4[5] *= sY;
+	inOutMat4x4[6] *= sY;
+	inOutMat4x4[7] *= sY;
+	inOutMat4x4[8] *= sZ;
+	inOutMat4x4[9] *= sZ;
+	inOutMat4x4[10] *= sZ;
+	inOutMat4x4[11] *= sZ;
 }
 
-static void libg3DMat4x4Translate(float* inOutMat4x4, float tX, float tY, float tZ)
+static inline void libg3DMat4x4Translate(float* inOutMat4x4, float tX, float tY, float tZ)
 {
 	// 等价于左乘 [[1,0,0,tX], [0,1,0,tY], [0,0,1,tZ], [0,0,0,1]]。
 	//   由于未经透视投影前，不管如何变换，第3行均为[0,0,0,1]，
-	//   可省略第3行的计算。
+	//   可不用左乘，直接简化如下
 	inOutMat4x4[3] += tX;
 	inOutMat4x4[7] += tY;
 	inOutMat4x4[11] += tZ;
 }
 
-static void libg3DMat4x4Rotate(float* inOutMat4x4, float degX, float degY, float degZ)
+static inline void libg3DMat4x4Rotate(float* inOutMat4x4, float degX, float degY, float degZ)
 {
+	float alphas[] = {
+		degX * DEG_TO_RAD,
+		degY * DEG_TO_RAD,
+		degZ * DEG_TO_RAD
+	};
 	float coss[] = {
-		cosf(degX * DEG_TO_RAD),
-		cosf(degY * DEG_TO_RAD),
-		cosf(degZ * DEG_TO_RAD) };
+		cosf(alphas[0]),
+		cosf(alphas[1]),
+		cosf(alphas[2])
+	};
 	float sins[] = {
-		sinf(degX * DEG_TO_RAD),
-		sinf(degY * DEG_TO_RAD),
-		sinf(degZ * DEG_TO_RAD) };
-	float right[16] = { 0 };
-	float out[16] = { 0 };
-	right[0] = coss[1] * coss[2];
-	right[1] = -coss[0] * sins[2];
-	right[2] = sins[1];
-	right[4] = sins[0] * sins[1] * coss[2] + coss[0] * sins[2];
-	right[5] = coss[0] * coss[2] - sins[0] * sins[1] * sins[2];
-	right[6] = -sins[0] * sins[1];
-	right[8] = sins[0] * sins[2] - coss[0] * sins[1] * coss[2];
-	right[9] = coss[0] * sins[1] * sins[2] + sins[0] * coss[2];
-	right[10] = coss[0] * coss[1];
-	right[15] = 1;
-	libg3DMat4x4MulMat4x4(out, inOutMat4x4, right);
-	memcpy(inOutMat4x4, out, sizeof(float) * 16);
+		sinf(alphas[0]),
+		sinf(alphas[1]),
+		sinf(alphas[2])
+	};
+	float left[16] = { 0 };
+	left[0] = coss[1] * coss[2];
+	left[1] = -coss[0] * sins[2];
+	left[2] = sins[1];
+	left[4] = sins[0] * sins[1] * coss[2] + coss[0] * sins[2];
+	left[5] = coss[0] * coss[2] - sins[0] * sins[1] * sins[2];
+	left[6] = -sins[0] * coss[1];
+	left[8] = sins[0] * sins[2] - coss[0] * sins[1] * coss[2];
+	left[9] = coss[0] * sins[1] * sins[2] + sins[0] * coss[2];
+	left[10] = coss[0] * coss[1];
+	left[15] = 1;
+	libg3DMat4x4MulMat4x4(inOutMat4x4, left, inOutMat4x4);
 }
 
-static void libg3DNormalizeVec3(float* vec3)
+static inline void libg3DNormalizeVec3(float* vec3)
 {
 	float rLen = sqrtf(vec3[0] * vec3[0] + vec3[1] * vec3[1] + vec3[2] * vec3[2]);
 	rLen = 1.f / rLen;
@@ -217,7 +224,7 @@ static void libg3DNormalizeVec3(float* vec3)
 	vec3[2] *= rLen;
 }
 
-static void libg3DVec3CrossVec3(float* outVec3, const float* lftVec3, const float* rhtVec3)
+static inline void libg3DVec3CrossVec3(float* outVec3, const float* lftVec3, const float* rhtVec3)
 {
 	// 使用临时变量v3，避免 outVec3==lft/rhtVec3 时的原地运算问题
 	float v3[3];
@@ -227,7 +234,7 @@ static void libg3DVec3CrossVec3(float* outVec3, const float* lftVec3, const floa
 	memcpy(outVec3, v3, sizeof(float) * 3);
 }
 
-static void libg3DMat4x4LookAt(
+static inline void libg3DMat4x4LookAt(
 	float* mat4x4,
 	const float* eyeVec3,
 	const float* centerVec3)
@@ -259,7 +266,7 @@ static void libg3DMat4x4LookAt(
 	mat4x4[15] = 1.f;
 }
 
-static void libg3DMatInverse(float* mat4x4)
+static inline void libg3DMat4x4Inverse(float* mat4x4)
 {
 	// 三维图形库中，一般只对位姿矩阵应用逆变换
 	// 可以简化求逆为
@@ -281,6 +288,13 @@ static void libg3DMatInverse(float* mat4x4)
 	mat4x4[3] = -1.f * (mat4x4[0] * t[0] + mat4x4[1] * t[1] + mat4x4[2] * t[2]);
 	mat4x4[7] = -1.f * (mat4x4[4] * t[0] + mat4x4[5] * t[1] + mat4x4[6] * t[2]);
 	mat4x4[11] = -1.f * (mat4x4[8] * t[0] + mat4x4[9] * t[1] + mat4x4[10] * t[2]);
+}
+
+static inline float libg3DMat3x3Determinant(const float* mat3x3)
+{
+	return mat3x3[0] * (mat3x3[4]*mat3x3[8]-mat3x3[5]*mat3x3[7])
+		- mat3x3[1] * (mat3x3[3] * mat3x3[8] - mat3x3[5] * mat3x3[6])
+		+ mat3x3[2] * (mat3x3[3] * mat3x3[7] - mat3x3[4] * mat3x3[6]);
 }
 
 #endif // !_MATH3D_H

@@ -62,6 +62,7 @@ static float nearClip = .1f;
 static float FOV = 90.f;
 static float aspectHW = 1.f;
 
+static unsigned char cullFaceMode = 0;
 static unsigned char texApplied = 0;
 static unsigned char texBilinearFlt = 1;
 
@@ -130,6 +131,14 @@ static void keyboardCallback(int key, int event)
 			aspectHW += .1f;
 			changed = 1;
 		}
+		else if (key == 'C')
+		{
+			++cullFaceMode;
+			if (cullFaceMode == 3)
+				cullFaceMode = 0;
+			libg3DSetCullFaceMode(cullFaceMode);
+			changed = 1;
+		}
 		else if (key == 'T')
 		{
 			if (texApplied == 0)
@@ -178,6 +187,10 @@ static void timerCallback(int timerID)
 	static float* model = NULL;
 	if (model == NULL)
 		model = libg3DGenIdentity4x4(); // 内存漏了但不要紧
+
+	//  输出模型矩阵
+	libg3DPrintMat4x4(model, "model");
+
 	//   设置一个环绕相机
 	//     初始化环绕中心点为原点
 	static float center[3] = { 0,0,0 };
@@ -203,7 +216,7 @@ static void timerCallback(int timerID)
 	printf("eyeZOXAngleDeg:%20f\n", eyeZOXAngleDeg);
 	libg3DPrintMat4x4(view, "camera pose");
 
-	libg3DMatInverse(view);
+	libg3DMat4x4Inverse(view);
 	//   设置透视投影矩阵
 	static float* proj = NULL;
 	if (proj == NULL)
@@ -384,7 +397,16 @@ static void timerCallback(int timerID)
 	//  设置模型矩阵为单位阵
 	static float* model = NULL;
 	if (model == NULL)
+	{
 		model = libg3DGenIdentity4x4(); // 内存漏了但不要紧
+		// 测试一下变换
+		libg3DMat4x4Scale(model, 1.f, 1.f, 1.f);
+		libg3DMat4x4Rotate(model, 0, 45.f, 0);
+		libg3DMat4x4Translate(model, 0, 0, 0);
+	}
+	//   输出模型矩阵
+	libg3DPrintMat4x4(model, "model");
+
 	//   设置一个环绕相机
 	//     初始化环绕中心点为原点
 	static float center[3] = { 0,0,0 };
@@ -410,7 +432,7 @@ static void timerCallback(int timerID)
 	printf("eyeZOXAngleDeg:%20f\n", eyeZOXAngleDeg);
 	libg3DPrintMat4x4(view, "camera pose");
 
-	libg3DMatInverse(view);
+	libg3DMat4x4Inverse(view);
 	//   设置透视投影矩阵
 	static float* proj = NULL;
 	if (proj == NULL)

@@ -1,33 +1,20 @@
 ﻿  graphics3D.c
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(102,49): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(112,49): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(188,25): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(189,25): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(190,25): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(192,25): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(193,25): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(194,25): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
+D:\Work\repos\Mini3DWithLibGraphics\libg3D\texture.h(218,4): warning C4244: “=”: 从“float”转换到“unsigned char”，可能丢失数据
+D:\Work\repos\Mini3DWithLibGraphics\libg3D\texture.h(219,4): warning C4244: “=”: 从“float”转换到“unsigned char”，可能丢失数据
+D:\Work\repos\Mini3DWithLibGraphics\libg3D\texture.h(220,4): warning C4244: “=”: 从“float”转换到“unsigned char”，可能丢失数据
+D:\Work\repos\Mini3DWithLibGraphics\libg3D\texture.h(221,4): warning C4244: “=”: 从“float”转换到“unsigned char”，可能丢失数据
 D:\Work\repos\Mini3DWithLibGraphics\libg3D\graphics3D.c(165,21): warning C4090: “=”: 不同的“const”限定符
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\graphics3D.c(171,19): warning C4090: “=”: 不同的“const”限定符
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\graphics3D.c(215,1): warning C4090: “初始化”: 不同的“const”限定符
+D:\Work\repos\Mini3DWithLibGraphics\libg3D\graphics3D.c(174,20): warning C4090: “=”: 不同的“const”限定符
+D:\Work\repos\Mini3DWithLibGraphics\libg3D\graphics3D.c(236,1): warning C4090: “初始化”: 不同的“const”限定符
   main.c
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(102,49): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(112,49): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(188,25): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(189,25): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(190,25): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(192,25): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(193,25): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\libg3D\math3D.h(194,25): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\main.c(377,43): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\main.c(377,77): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\main.c(378,43): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\main.c(379,43): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\main.c(379,77): warning C4244: “函数”: 从“double”转换到“float”，可能丢失数据
-D:\Work\repos\Mini3DWithLibGraphics\main.c(435,18): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\Work\repos\Mini3DWithLibGraphics\libg3D\texture.h(218,4): warning C4244: “=”: 从“float”转换到“unsigned char”，可能丢失数据
+D:\Work\repos\Mini3DWithLibGraphics\libg3D\texture.h(219,4): warning C4244: “=”: 从“float”转换到“unsigned char”，可能丢失数据
+D:\Work\repos\Mini3DWithLibGraphics\libg3D\texture.h(220,4): warning C4244: “=”: 从“float”转换到“unsigned char”，可能丢失数据
+D:\Work\repos\Mini3DWithLibGraphics\libg3D\texture.h(221,4): warning C4244: “=”: 从“float”转换到“unsigned char”，可能丢失数据
+D:\Work\repos\Mini3DWithLibGraphics\main.c(258,18): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
   正在生成代码
-  16 of 100 functions (16.0%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+  194 of 257 functions (75.5%) were compiled, the rest were copied from previous compilation.
+    157 functions were new in current compilation
+    10 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   Mini3DWithLibGraphics.vcxproj -> D:\Work\repos\Mini3DWithLibGraphics\Release\Mini3DWithLibGraphics.exe
