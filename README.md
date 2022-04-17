@@ -1,6 +1,6 @@
 # Mini3D with LibGraphics
 
-本企划旨在让笔者本人摸清楚**基本的**三维图形渲染流程，同时~~帮你卷赢C大程~~。
+本企划旨在让笔者本人摸清楚**基本的三维光栅化（Rasterization）**图形渲染流程，同时~~帮你卷赢C大程~~。
 
 由于众所周知的原因，C大程很多任课老师来自**CAD&CG国家重点实验室**，做一个具有三维渲染功能的大程是比较讨喜的选择。笔者搜了一圈GitHub，没有找到适配**LibGraphics**的**软光栅化渲染库**，因此决定自己实现一个，权当练习与科普。
 
@@ -10,13 +10,27 @@
 
 - 线元绘制
 - 面元绘制（绘制颜色或纹理）
+  - 最近邻采样
+  - 双线性插值采样
 - 关于LibGraphics的文档
 
 ## 待完成
 
 - 点元绘制
+- OBJ模型导入
+- 光照
 - 文档
 - ......
+
+## 效果图
+
+| 面绘制                             | 面绘制（有纹理）                           |
+| ---------------------------------- | ------------------------------------------ |
+| ![线框](./doc/rsc/Result-Face.png) | ![线框](./doc/rsc/Result-Face-Texture.png) |
+
+| 线框绘制                                |
+| --------------------------------------- |
+| ![线框](./doc/rsc/Result-Wireframe.png) |
 
 ## 章节
 
@@ -27,39 +41,7 @@
   - 讲述Win32事件（消息）循环与绘制流程。
   - 修改Win32事件（消息）循环避免动画闪烁问题。
 - [魔改一下LibGraphics——操作像素](./doc/ModifyLibGraphics-Pixel.md)
-  - 实现接口：
 
-```c
-/// <summary>
-/// 获取窗口宽度，以像素为单位，而不是LibGraphics那个奇怪的double类型数值
-/// </summary>
-/// <returns>窗口宽度（以像素为单位）</returns>
-int libg3DGetWindowPixelWidth();
-
-/// <summary>
-/// 获取窗口高度，以像素为单位，而不是LibGraphics那个奇怪的double类型数值
-/// </summary>
-/// <returns>窗口高度（以像素为单位）</returns>
-int libg3DGetWindowPixelHeight();
-
-/// <summary>
-/// 设置当前视口尺寸
-/// </summary>
-/// <param name="x">距离窗口左下的横坐标</param>
-/// <param name="y">距离窗口左下的纵坐标</param>
-/// <param name="width">宽度</param>
-/// <param name="height">高度</param>
-void libg3DViewport(int x, int y, int width, int height);
-
-/// <summary>
-/// 使用某个颜色填充视口
-/// </summary>
-/// <param name="r">红</param>
-/// <param name="g">绿</param>
-/// <param name="b">蓝</param>
-void libg3DClearWithColor(float r, float g, float b);
-```
-
-- [三维渲染流程中的数学——坐标系统 与 矩阵运算](./doc/Math-CoordAndMatrix.md)
+- 三维渲染流程中的数学——坐标系统 与 矩阵运算
 - 三维渲染流程中的数学——算法
 
